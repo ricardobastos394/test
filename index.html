@@ -48,7 +48,7 @@ async function tirarFoto() {
   campoTexto.value = "A ler...";
 
   const { data: { text } } = await Tesseract.recognize(canvas, "eng", {
-    tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE
+    tessedit_pageseg_mode: Tesseract.PSM.AUTO
   });
 
   campoTexto.value = text.replace(/\s+/g, "").trim();
