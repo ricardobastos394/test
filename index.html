@@ -2,27 +2,20 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>OCR Simples</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCR Super Simples</title>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<style>
-  body { font-family: Arial; padding: 15px; }
-  input { width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px; }
-  button { padding: 10px; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
-  video, canvas { width: 100%; max-width: 400px; border: 1px solid #ccc; display: block; margin-bottom: 10px; }
-</style>
 </head>
 <body>
 
-<h2>OCR Simples</h2>
+<h2>OCR Super Simples</h2>
 
-<input id="campoTexto" placeholder="Texto lido">
+<input id="campoTexto" placeholder="Texto lido" style="width:100%; font-size:16px; margin-bottom:10px;">
 
-<video id="video" autoplay playsinline></video>
+<video id="video" autoplay playsinline style="width:100%; max-width:400px; border:1px solid #ccc; display:block; margin-bottom:10px;"></video>
 <canvas id="canvas" hidden></canvas>
 
 <button onclick="abrirCamera()">Abrir Câmara</button>
-<button onclick="tirarFoto()">Tirar Foto e Ler Texto</button>
+<button onclick="tirarFoto()">Tirar Foto e Ler</button>
 
 <script>
 const video = document.getElementById("video");
@@ -48,7 +41,7 @@ async function tirarFoto() {
   campoTexto.value = "A ler...";
 
   const { data: { text } } = await Tesseract.recognize(canvas, "eng", {
-    tessedit_pageseg_mode: Tesseract.PSM.AUTO
+    tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE
   });
 
   campoTexto.value = text.replace(/\s+/g, "").trim();
