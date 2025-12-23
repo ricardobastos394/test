@@ -1,1 +1,70 @@
 
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>OCR GitHub Pages</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+  body { font-family: Arial; padding: 15px; }
+  input { width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px; }
+  button { padding: 10px; font-size: 16px; margin-bottom: 10px; cursor: pointer; }
+  video, canvas { width: 100%; max-width: 400px; border: 1px solid #ccc; display: block; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<h2>OCR GitHub Pages</h2>
+
+<input id="campoTexto" placeholder="Texto lido">
+
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas" hidden></canvas>
+
+<button onclick="abrirCamera()">Abrir Câmara</button>
+<button onclick="tirarFoto()">Tirar Foto e Ler Texto</button>
+
+<script>
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const campoTexto = document.getElementById("campoTexto");
+const ctx = canvas.getContext("2d");
+let stream = null;
+
+// Abrir câmara
+async function abrirCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    video.srcObject = stream;
+  } catch (err) {
+    alert("Erro ao abrir a câmara: " + err.message);
+  }
+}
+
+// Tirar foto e ler texto
+async function tirarFoto() {
+  if (!stream) return alert("Abra a câmara primeiro!");
+  
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  campoTexto.value = "A ler...";
+
+  try {
+    const { data: { text } } = await Tesseract.recognize(canvas, "eng", {
+      tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE
+    });
+    campoTexto.value = text.replace(/\s+/g, "").trim();
+  } catch (err) {
+    campoTexto.value = "Erro a ler o texto: " + err.message;
+  }
+
+  // Parar câmara
+  stream.getTracks().forEach(track => track.stop());
+}
+</script>
+
+</body>
+</html>
